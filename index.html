@@ -52,7 +52,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* balões */
+/* balões normais */
 .balloon {
     width: 80px;
     height: 100px;
@@ -87,6 +87,56 @@ h1 {
     bottom: -50px;
 }
 
+/* balão dourado */
+.special {
+    width: 130px;
+    height: 160px;
+    background: gold !important;
+    box-shadow:
+        inset -12px -12px 22px rgba(255,255,255,0.4),
+        0 0 25px rgba(255,215,0,0.9);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* coração */
+.love-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.2);
+    font-size: 34px;
+    font-weight: bold;
+    color: red;
+    opacity: 0;
+    z-index: 999;
+    animation: lovePop 2.5s ease forwards;
+}
+
+@keyframes lovePop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+    40% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.8);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2.2);
+    }
+}
+
 /* animal educativo */
 .animal-popup {
     position: fixed;
@@ -107,7 +157,6 @@ h1 {
     font-size: 38px;
     font-weight: bold;
     color: white;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
     margin-top: 10px;
 }
 
@@ -130,26 +179,37 @@ h1 {
     }
 }
 
-/* decoração */
-.decor {
+/* pássaros */
+.bird {
     position: absolute;
-    font-size: 45px;
-    opacity: 0.6;
+    font-size: 40px;
+    left: -100px;
+    animation: flyBird 6s linear forwards;
+    z-index: 5;
 }
 
-.d1 { top: 30px; left: 30px; }
-.d2 { top: 60px; right: 40px; }
-.d3 { bottom: 80px; left: 50px; }
-.d4 { bottom: 100px; right: 60px; }
+@keyframes flyBird {
+    0% { left: -100px; }
+    100% { left: 110%; }
+}
 
+/* jacaré */
+.crocodile {
+    position: absolute;
+    bottom: 20px;
+    left: -150px;
+    font-size: 80px;
+    animation: walkCroc 6s linear forwards;
+    z-index: 6;
+}
+
+@keyframes walkCroc {
+    0% { left: -150px; }
+    100% { left: 110%; }
+}
 </style>
 </head>
 <body>
-
-<div class="decor d1">☁️</div>
-<div class="decor d2">⭐</div>
-<div class="decor d3">🌈</div>
-<div class="decor d4">☀️</div>
 
 <div class="topo">
     <h1>🎈 Balões do Luís Miguel 🎈</h1>
@@ -160,6 +220,7 @@ h1 {
 <script>
 let score = 0;
 let totalPopped = 0;
+let specialActive = false;
 
 const colors = [
     "#ff4d6d",
@@ -177,21 +238,21 @@ const animals = [
     { emoji: "🐊", name: "JACARÉ" },
     { emoji: "🐶", name: "CACHORRO" },
     { emoji: "🦁", name: "LEÃO" },
-    { emoji: "🐘", name: "ELEFANTE" },
-    { emoji: "🦒", name: "GIRAFA" },
-    { emoji: "🐸", name: "SAPO" },
-    { emoji: "🐰", name: "COELHO" },
-    { emoji: "🐼", name: "PANDA" },
-    { emoji: "🐷", name: "PORQUINHO" }
+    { emoji: "🐘", name: "ELEFANTE" }
+];
+
+const backgrounds = [
+    "linear-gradient(to top, #74ebd5, #9face6, #ffffff)",
+    "linear-gradient(to top, #ff9a9e, #fad0c4, #ffffff)",
+    "linear-gradient(to top, #a18cd1, #fbc2eb, #ffffff)",
+    "linear-gradient(to top, #f6d365, #fda085, #ffffff)"
 ];
 
 function showAnimal() {
-    const animal =
-        animals[Math.floor(Math.random() * animals.length)];
+    const animal = animals[Math.floor(Math.random() * animals.length)];
 
     const popup = document.createElement("div");
     popup.classList.add("animal-popup");
-
     popup.innerHTML = `
         <div class="animal-emoji">${animal.emoji}</div>
         <div class="animal-name">${animal.name}</div>
@@ -199,27 +260,66 @@ function showAnimal() {
 
     document.body.appendChild(popup);
 
-    setTimeout(() => {
-        popup.remove();
-    }, 3000);
+    setTimeout(() => popup.remove(), 3000);
 }
 
-function createBalloon() {
+function showLoveMessage() {
+    const love = document.createElement("div");
+    love.classList.add("love-message");
+    love.innerHTML = "❤️ TE AMO ❤️";
+
+    document.body.appendChild(love);
+
+    setTimeout(() => love.remove(), 2500);
+}
+
+function showBirds() {
+    for (let i = 0; i < 3; i++) {
+        const bird = document.createElement("div");
+        bird.classList.add("bird");
+        bird.innerHTML = "🕊️";
+        bird.style.top = (80 + Math.random() * 150) + "px";
+        bird.style.animationDelay = (i * 0.5) + "s";
+
+        document.body.appendChild(bird);
+
+        setTimeout(() => bird.remove(), 7000);
+    }
+}
+
+function showCrocodile() {
+    const croc = document.createElement("div");
+    croc.classList.add("crocodile");
+    croc.innerHTML = "🐊";
+
+    document.body.appendChild(croc);
+
+    setTimeout(() => croc.remove(), 6000);
+}
+
+function changeScenario() {
+    const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    document.body.style.background = bg;
+}
+
+function createBalloon(isSpecial = false) {
     const balloon = document.createElement("div");
     balloon.classList.add("balloon");
 
-    const color =
-        colors[Math.floor(Math.random() * colors.length)];
-    balloon.style.background = color;
+    if (isSpecial) {
+        balloon.classList.add("special");
+    } else {
+        balloon.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+    }
 
     balloon.style.left =
-        Math.random() * (window.innerWidth - 100) + "px";
-
-    const speed = Math.random() * 2 + 2.5;
+        Math.random() * (window.innerWidth - 150) + "px";
 
     document.body.appendChild(balloon);
 
     let position = -180;
+    const speed = isSpecial ? 2 : Math.random() * 2 + 2.5;
 
     const move = setInterval(() => {
         position += speed;
@@ -228,18 +328,22 @@ function createBalloon() {
         if (position > window.innerHeight) {
             clearInterval(move);
             balloon.remove();
+
+            if (isSpecial) {
+                specialActive = false;
+            }
         }
     }, 20);
 
     balloon.addEventListener("click", () => {
         clearInterval(move);
+        balloon.remove();
 
-        balloon.style.transform = "scale(1.5)";
-        balloon.style.opacity = "0";
-
-        setTimeout(() => {
-            balloon.remove();
-        }, 200);
+        if (isSpecial) {
+            showLoveMessage();
+            specialActive = false;
+            return;
+        }
 
         score++;
         totalPopped++;
@@ -247,15 +351,30 @@ function createBalloon() {
         document.getElementById("score").innerText =
             "Pontos: " + score;
 
-        /* a cada 5 balões -> animal educativo */
         if (totalPopped % 5 === 0) {
             showAnimal();
+        }
+
+        if (totalPopped % 10 === 0 && !specialActive) {
+            specialActive = true;
+            createBalloon(true);
+        }
+
+        if (totalPopped % 20 === 0) {
+            changeScenario();
+            showBirds();
+        }
+
+        if (totalPopped % 30 === 0) {
+            showCrocodile();
         }
     });
 }
 
 setInterval(() => {
-    createBalloon();
+    if (!specialActive) {
+        createBalloon();
+    }
 }, 800);
 </script>
 
