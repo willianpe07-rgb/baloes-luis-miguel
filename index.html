@@ -52,7 +52,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* balões normais */
+/* balões */
 .balloon {
     width: 80px;
     height: 100px;
@@ -104,7 +104,7 @@ h1 {
     100% { transform: scale(1); }
 }
 
-/* coração */
+/* mensagem te amo */
 .love-message {
     position: fixed;
     top: 50%;
@@ -234,11 +234,14 @@ const colors = [
 ];
 
 const animals = [
-    { emoji: "🐵", name: "MACACO" },
-    { emoji: "🐊", name: "JACARÉ" },
-    { emoji: "🐶", name: "CACHORRO" },
-    { emoji: "🦁", name: "LEÃO" },
-    { emoji: "🐘", name: "ELEFANTE" }
+    { emoji: "🐵", name: "Macaco" },
+    { emoji: "🐊", name: "Jacaré" },
+    { emoji: "🐶", name: "Cachorro" },
+    { emoji: "🦁", name: "Leão" },
+    { emoji: "🐘", name: "Elefante" },
+    { emoji: "🦒", name: "Girafa" },
+    { emoji: "🐸", name: "Sapo" },
+    { emoji: "🐰", name: "Coelho" }
 ];
 
 const backgrounds = [
@@ -253,6 +256,7 @@ function showAnimal() {
 
     const popup = document.createElement("div");
     popup.classList.add("animal-popup");
+
     popup.innerHTML = `
         <div class="animal-emoji">${animal.emoji}</div>
         <div class="animal-name">${animal.name}</div>
@@ -260,7 +264,19 @@ function showAnimal() {
 
     document.body.appendChild(popup);
 
-    setTimeout(() => popup.remove(), 3000);
+    /* fala o nome do animal */
+    const speech = new SpeechSynthesisUtterance(animal.name);
+    speech.lang = "pt-BR";
+    speech.rate = 0.9;
+    speech.pitch = 1.1;
+    speech.volume = 1;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(speech);
+
+    setTimeout(() => {
+        popup.remove();
+    }, 3000);
 }
 
 function showLoveMessage() {
@@ -270,7 +286,9 @@ function showLoveMessage() {
 
     document.body.appendChild(love);
 
-    setTimeout(() => love.remove(), 2500);
+    setTimeout(() => {
+        love.remove();
+    }, 2500);
 }
 
 function showBirds() {
@@ -283,7 +301,9 @@ function showBirds() {
 
         document.body.appendChild(bird);
 
-        setTimeout(() => bird.remove(), 7000);
+        setTimeout(() => {
+            bird.remove();
+        }, 7000);
     }
 }
 
@@ -294,7 +314,9 @@ function showCrocodile() {
 
     document.body.appendChild(croc);
 
-    setTimeout(() => croc.remove(), 6000);
+    setTimeout(() => {
+        croc.remove();
+    }, 6000);
 }
 
 function changeScenario() {
@@ -351,20 +373,24 @@ function createBalloon(isSpecial = false) {
         document.getElementById("score").innerText =
             "Pontos: " + score;
 
+        /* a cada 5 -> animal + voz */
         if (totalPopped % 5 === 0) {
             showAnimal();
         }
 
+        /* a cada 10 -> balão dourado */
         if (totalPopped % 10 === 0 && !specialActive) {
             specialActive = true;
             createBalloon(true);
         }
 
+        /* a cada 20 -> muda cenário + pássaros */
         if (totalPopped % 20 === 0) {
             changeScenario();
             showBirds();
         }
 
+        /* a cada 30 -> jacaré */
         if (totalPopped % 30 === 0) {
             showCrocodile();
         }
